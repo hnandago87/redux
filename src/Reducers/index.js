@@ -1,5 +1,7 @@
 import { combineReducers } from 'redux'
 
+import {createPost,editPost} from '../API.js'
+
 import {FETCH_POST,ADD_POST,EDIT_POST,DELETE_POST} from '../Actions'
 import {GET_POST_COMMENT,GET_COMMENT_DETAIL,ADD_COMMENT,EDIT_COMMENT,DELETE_COMMENT ,VOTE_COMMENT, GET_CATEGORY, VOTE_POST} from '../Actions'
 const initialState = {}
@@ -89,6 +91,7 @@ function posts(state=initialState,action){
                [post.id]:post
             }
         case ADD_POST:
+            //currently working
             return{
                 ...state,
                 [id]:{
@@ -103,6 +106,8 @@ function posts(state=initialState,action){
                 }
             }
         case EDIT_POST:
+            var result = editPost(id, title, body);
+            console.log(result)
             return{
                 ...state,
                 [id]:{

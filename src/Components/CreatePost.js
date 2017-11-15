@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import {addPost} from '../Actions'
+import {asyncAddPost} from '../Actions'
 
 import BackToPost from './BackToPost'
 
@@ -51,8 +51,9 @@ class CreatePost extends Component{
                                 <label htmlFor="category">Select Category</label>
                                 <select className="form-control" ref="category" id="category">
                                     <option defaultValue disabled>Choose here</option>
-                                    <option>React</option>
-                                    <option>Redux</option>
+                                    <option value="react">React</option>
+                                    <option value="redux">Redux</option>
+                                    <option value="udacity">Udacity</option>
                                 </select>
                             </div>
                             <div className="form-group">
@@ -76,7 +77,7 @@ class CreatePost extends Component{
 
 function mapDispatchToProps(dispatch){
     return{
-        addingNewPost : (data)=>{dispatch(addPost(data))}
+        addingNewPost : (data)=>{dispatch(asyncAddPost(data))}
     }
 }
 export default connect(null,mapDispatchToProps)(CreatePost)

@@ -4,7 +4,7 @@ import {connect} from 'react-redux'
 import BackToPost from './BackToPost'
 
 
-import {editPost} from '../Actions'
+import {asyncEditPost} from '../Actions'
 
 class EditPost extends Component {
     constructor(props){
@@ -50,7 +50,7 @@ class EditPost extends Component {
 
 function mapDispatchToProps (dispatch) {
   return {
-    editedPost: function(data){console.log(data);return dispatch(editPost(data))}
+    editedPost: function(data){console.log(data);return dispatch(asyncEditPost(data))}
   }
 }
 

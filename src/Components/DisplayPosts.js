@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {Link} from 'react-router-dom';
 import { connect } from 'react-redux'
-import {deletePost} from '../Actions'
+import {asyncDeletePost} from '../Actions'
 
 class Display extends Component{
     render(){
@@ -46,7 +46,7 @@ class Display extends Component{
 }
 function mapDispatchToProps(dispatch){
   return {
-    deletingPost:(data)=>{dispatch(deletePost({id:data}))}
+    deletingPost:(data)=>{dispatch(asyncDeletePost({id:data}))}
   }
 }
 export default connect(null, mapDispatchToProps)(Display);

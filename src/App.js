@@ -2,10 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 
 import './App.css';
-import {fetchCategory,votePost} from './Actions'
+import {asyncVotePost, asyncFetchPost, asyncFetchCategory} from './Actions'
 import Display from './Components/DisplayPosts'
-
-import * as API from './API.js'
 
 class App extends Component {
   constructor(props) {
@@ -33,17 +31,12 @@ class App extends Component {
     
   }
   componentDidMount(){
-    let getC = this.props.getCategories
-    API.getCategories().then((data)=>{ 
-    data.categories.forEach(
-        function(category){
-            getC(category)
-            }
-        )
-    });
+    this.props.getCategories();
+    this.props.getPost();
   }
   
   render() { 
+    console.log(this.props.post.categories)
     return (
       <div className="App">
         <div className="jumbotron">
@@ -73,8 +66,9 @@ function mapStateToProps(posts,ownProps){
 }
 function mapDispatchToProps(dispatch){
   return{
-    getCategories:(data)=>{dispatch(fetchCategory(data))},
-    votePost:(data)=>{dispatch(votePost(data))}
+    getPost:()=>{dispatch(asyncFetchPost())},
+    getCategories:()=>{dispatch(asyncFetchCategory())},
+    votePost:(data)=>{dispatch(asyncVotePost(data))}
   }
 }
 

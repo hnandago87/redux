@@ -2,8 +2,7 @@ import React, { Component} from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from "react-router-dom";
 
-import {loadCommentToPost,addComment,editComment,deleteComment,voteForComment} from '../Actions'
-import * as API from '../API'
+import {asyncLoadCommentToPost,asyncAddComment,asyncEditComment,asyncDeleteComment,asyncVoteForComment} from '../Actions'
 import BackToPost from './BackToPost'
 import PostInfo from './comments/postInfo'
 
@@ -28,9 +27,9 @@ class ViewPostAndComment extends Component{
     }
     VoteComment(vote){
          if(vote[0]===0){
-             this.props.VotingComment({id:vote[1],voteScore:vote[2]-1})
+             this.props.VotingComment({id:vote[1],voteScore:"downVote"})
          } else{
-              this.props.VotingComment({id:vote[1],voteScore:vote[2]+1})
+              this.props.VotingComment({id:vote[1],voteScore:"upVote"})
          }
     }
     getCommentData(e){
@@ -53,31 +52,24 @@ class ViewPostAndComment extends Component{
     }
     getFormData(e){
         e.preventDefault();
-        console.log(this.state.comments)
+        let body = this.refs.comment.value;
+        let author = this.refs.author.value;
+        let parentId = this.props.match.params.postId;
         var randLetter = String.fromCharCode(65 + Math.floor(Math.random() * 26)+Math.floor(Math.random()*100*Math.random()+100*Math.random()*10));
         var uniqid = randLetter + Date.now();
-        let comments = this.state.comments
-        comments.push({id:uniqid.toString(),author:this.refs.author.value,body:this.refs.comment.value,parentDeleted:false,parentId:this.state.postId,timestamp:Date.now(),voteScore:0})
-        this.props.AddNewComment({id:uniqid.toString(),author:this.refs.author.value,body:this.refs.comment.value,parentDeleted:false,parentId:this.state.postId,timestamp:Date.now(),voteScore:0})
-        this.setState({comments:comments, editable:!this.state.editable})
+        this.props.AddNewComment({id:uniqid.toString(),timestamp:Date.now(),body:body,author:author,parentId:parentId})
+        this.setState({editable:!this.state.editable})
     }
     componentDidMount(){
-       let getC = this.props.getComment;
-       this.setState({postId:this.props.match.params.postId})
-       API.getComments(this.props.match.params.postId).then((post)=>{
-           post.forEach(function(comment){
-               getC(comment)
-           })
-       })
+        this.setState({postId:this.props.match.params.postId});
+        this.props.getComment(this.props.match.params.postId);
     }
     componentWillReceiveProps(newProps){
-        console.log(newProps.comment)
         this.setState({post:newProps.post,comments:newProps.comment})
     }
         
     render(){
         let post = this.props.post
-        console.log(this.state)
         return(
             <div className="container">
                 <div className="jumbotron">
@@ -138,11 +130,11 @@ class ViewPostAndComment extends Component{
                                     </div>
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="name" className="cols-sm-2 control-label">Author Name</label>
+                                    <label htmlFor="name" className="cols-sm-2 control-label">Body</label>
                                     <div className="cols-sm-10">
                                         <div className="input-group">
                                             <span className="input-group-addon"><i className="fa fa-user fa" aria-hidden="true"></i></span>
-                                            <textarea rows="3" ref="comment" cols="60" className="form-control" name="name" id="name"  placeholder="Enter your Name"/>
+                                            <textarea rows="3" ref="comment" cols="60" className="form-control" name="body" id="body"  placeholder="Enter your Name"/>
                                         </div>
                                     </div>
                                 </div>
@@ -180,6 +172,7 @@ class ViewPostAndComment extends Component{
          }
     }
 function mapStateToProps(stateToBeSet,ownProps){
+    console.log(stateToBeSet)
     let postObj = null;
     let commentObj = [];
     if(Object.keys(stateToBeSet).length === 0){
@@ -188,6 +181,7 @@ function mapStateToProps(stateToBeSet,ownProps){
         Object.keys(stateToBeSet.comment).map(function(post){
             if(stateToBeSet.comment[post].body !== undefined){
                 if(stateToBeSet.comment[post].parentId===ownProps.match.params.postId && !stateToBeSet.comment[post].deleted){
+                    
                     commentObj.push(stateToBeSet.comment[post])
                 }
             }
@@ -207,12 +201,11 @@ function mapStateToProps(stateToBeSet,ownProps){
 }
 function mapDispatchToProps(dispatch){
   return {
-    getComment:(data)=>{dispatch(loadCommentToPost(data))},
-    AddNewComment:(data)=>{dispatch(addComment(data))},
-    EditingComment:(data)=>{dispatch(editComment(data))},
-    DeletingComment:(data)=>{dispatch(deleteComment(data))},
-    VotingComment:(data)=>{dispatch(voteForComment(data))}
+    getComment:(data)=>{dispatch(asyncLoadCommentToPost(data))},
+    AddNewComment:(data)=>{dispatch(asyncAddComment(data))},
+    EditingComment:(data)=>{dispatch(asyncEditComment(data))},
+    DeletingComment:(data)=>{dispatch(asyncDeleteComment(data))},
+    VotingComment:(data)=>{dispatch(asyncVoteForComment(data))}
   }
 }
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ViewPostAndComment));
- 

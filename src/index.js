@@ -1,15 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { Route } from 'react-router'
 import { BrowserRouter } from 'react-router-dom'
 import registerServiceWorker from './registerServiceWorker';
+import { createStore, applyMiddleware, compose } from 'redux';
+import thunk from 'redux-thunk';
 
 import rootReducer from './Reducers';
 import FetchPost from './Actions';
 import fetchCategory from './Actions'
-import * as API from './API.js'
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 
 import './index.css';
@@ -18,15 +18,7 @@ import EditPost from './Components/EditPost'
 import CreatePost from './Components/CreatePost'
 import ViewPostAndComment from './Components/ViewPostAndComment'
 
-const store = createStore(rootReducer,window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
-
-API.getPosts().then((data)=>{ 
-    data.forEach(
-        function(post){
-            store.dispatch(FetchPost(post))
-            }
-        )
-    });
+const store = createStore(rootReducer,{}, compose(applyMiddleware(thunk),window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()));
 
 ReactDOM.render(
     <Provider store={store}>

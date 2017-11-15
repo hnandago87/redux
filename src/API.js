@@ -8,6 +8,7 @@ export function getCategories(){
       .then( (res) => { return(res.json()) });
 }
 export function getPosts(){
+    console.log("Calling Fetch Post")
    return fetch(url+'posts', { headers: { 'Authorization': 'whatever-you-want', 'Content-Type':'application/json' }})
       .then( (res) => { return(res.json()) });
 }
@@ -34,7 +35,7 @@ export function createPost(id, timestamp, title, body, author, category){
         },
         body: JSON.stringify(payload)
     })
-      .then( (res) => { return(res.json()) });
+      //.then((res) => { return(res.json()) });
 }
 export function editPost(id, title, body){
     var payload = {
@@ -87,4 +88,76 @@ export function getComments(id){
         }
     })
     .then((res)=>{return (res.json())});
+}
+
+export function getSingleComment(id){
+    return fetch(url+'comments/'+id, {
+        method:'GET',
+        headers:{
+            ...headers,
+            'Content-Type':'application/json',
+            'Cache-Control':'no-cache'
+        }
+    }).then((res)=>{return res.json()});
+}
+export function createComment(id, timestamp, body, author, parentId){
+    var payload = {
+        id: id,
+        timestamp: timestamp,
+        body: body,
+        author: author,
+        parentId:parentId
+    };
+    return fetch(url+'comments', {
+        method: 'POST',
+        headers: {
+        ...headers,
+        'Content-Type': 'application/json',
+        "Cache-Control": "no-cache"
+        },
+        body: JSON.stringify(payload)
+    }).then((res) => { return(res.json()) });
+}
+
+export function editComment(id, body, timestamp){
+    var payload = {
+        "timestamp": timestamp,
+        "body": body
+        };
+    return fetch(url+'comments/'+id, {
+        method: 'PUT',
+        headers: {
+        ...headers,
+        'Content-Type': 'application/json',
+        "Cache-Control": "no-cache"
+        },
+        body: JSON.stringify(payload)
+    })
+      .then( (res) => { return(res.json()) });
+}
+
+export function deleteComment(id){
+    return fetch(url+'comments/'+id, {
+        method: 'DELETE',
+        headers: {
+        ...headers,
+        'Content-Type': 'application/json',
+        "Cache-Control": "no-cache"
+        }
+    })
+      .then( (res) => { return(res.json()) });
+}
+
+export function commentVote(id, vote){
+    var payload = {"option":vote==="upVote"?"upVote":"downVote"};
+    return fetch(url+'comments/'+id, {
+        method: 'POST',
+        headers: {
+        ...headers,
+        'Content-Type': 'application/json',
+        "Cache-Control": "no-cache"
+        },
+        body: JSON.stringify(payload)
+    })
+      .then( (res) => { return(res.json()) });
 }
